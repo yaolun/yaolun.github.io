@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>sx</title>
+<script>
+const q = (new URLSearchParams(location.search).get("q") || "").trim();
+
+// Matches: Stern+2005, Stern+2005-2008, Stern+ (no year)
+const m = q.match(/^(.+?)\s*\+\s*(\d{4}(?:\s*-\s*\d{4})?)?$/);
+
+let query = q;  // anything that doesn't match is passed through as a normal search
+if (m) {
+  query = `first_author:"${m[1].trim()}"`;
+  if (m[2]) query += ` year:${m[2].replace(/\s/g, "")}`;
+}
+
+const params = new URLSearchParams({
+  fq: "{!type=aqp v=$fq_database}",
+  fq_database: '(database:"Astronomy")',
+  p: "1",
+  q: query,
+  sort: "date desc",
+  d: "astrophysics",
+});
+
+location.replace("https://scixplorer.org/search?" + params.toString());
+</script>
